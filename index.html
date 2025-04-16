@@ -52,9 +52,11 @@
         const errorElem = document.getElementById('error'); 
         //Declare the MediaStreamConstraints object 
         const constraints = { 
-            audio: true, 
-            video: true 
-        } 
+          audio: false,  
+          video: { 
+            facingMode: "environment" 
+          } 
+        };
   
         function openCamera() { 
 //Ask the User for the access of the device camera and microphone 
