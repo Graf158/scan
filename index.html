@@ -18,34 +18,75 @@
             background-color: black;
             margin-bottom: 1rem;
         }
+
+        #error {
+            color: red;
+            padding: 0.6rem;
+            background-color: rgb(236 157 157);
+            margin-bottom: 0.6rem;
+            display: none;
+        }
     </style>
     <title>GetUserMedia demo</title>
 </head>
 
 <body>
-    <video id="stream" style="width: 100vw; height: 100vh;"/>
+    <h1> WebRTC getUserMedia() demo</h1>
+
+    <video id='video' width="600" height="300" autoplay playsinline>
+        Sorry, video element not supported in your browser
+    </video>
+
+    <div id="error"></div>
+
+    <button onclick="openCamera()"> Open Camera</button>
     <script>
-        (async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({
+
+        // получение элнмента видео
+        const videoElem = document.getElementById('video');
+
+        // получить поле для ввода error
+        const errorElem = document.getElementById('error');
+
+        // указание параметры канваса
+        const constraints = {
+          audio: false,
           video: {
-            facingMode: {
-              ideal: "environment"
-            }
-          },
-          audio: false
-        });
-        const videoEl = document.querySelector("#stream");
-        videoEl.srcObject = stream;
-        await videoEl.play();
-        
-        const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
-        window.setInterval(async () => {
-          const barcodes = await barcodeDetector.detect(videoEl);
-          if (barcodes.length <= 0) return;
-          alert(barcodes.map(barcode => barcode.rawValue));
-        }, 1000)
-        })();
+            facingMode: "environment"
+          }
+        };
+
+        function openCamera() {
+        // функция для начало записи видео
+            navigator.mediaDevices.getUserMedia(constraints)
+
+                // mediaStream - разрешение о том что пользователь разрешил открыть камеру
+                .then(mediaStream => {
+
+                    /*Обычно мы передаем полученный MediaStream
+                    в качестве источника видео- или аудиоэлементу
+                    (используя атрибут srcObject видео- или аудиоэлемента*/
+                    videoElem.srcObject = mediaStream;
+                    
+                    const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
+                    window.setInterval({
+                        const barcodes = barcodeDetector.detect(videoElem);
+                        if (barcodes.length <= 0) return;
+                        alert(barcodes.map(barcode => barcode.rawValue));
+                    }, 1000)
+                    
+                }).catch(err => {
+                    // handling the error if any
+                    errorElem.innerHTML = err;
+
+                    /*отделяется от соседних элементов переносом
+                    строки и занимает всю доступную ширину.*/
+                    errorElem.style.display = "block";
+                });
+
+        }
     </script>
 </body>
 
 </html>
+
