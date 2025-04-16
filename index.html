@@ -68,13 +68,6 @@
                     (используя атрибут srcObject видео- или аудиоэлемента*/
                     videoElem.srcObject = mediaStream;
                     
-                    const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
-                    window.setInterval({
-                        const barcodes = barcodeDetector.detect(videoElem);
-                        if (barcodes.length <= 0) return;
-                        alert(barcodes.map(barcode => barcode.rawValue));
-                    }, 1000)
-                    
                 }).catch(err => {
                     // handling the error if any
                     errorElem.innerHTML = err;
