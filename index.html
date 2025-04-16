@@ -18,63 +18,34 @@
             background-color: black;
             margin-bottom: 1rem;
         }
-
-        #error {
-            color: red;
-            padding: 0.6rem;
-            background-color: rgb(236 157 157);
-            margin-bottom: 0.6rem;
-            display: none;
-        }
     </style>
     <title>GetUserMedia demo</title>
 </head>
 
 <body>
-    <h1> WebRTC getUserMedia() demo</h1>
-
-    <video id='video' width="600" height="300" autoplay playsinline>
-        Sorry, video element not supported in your browser
-    </video>
-
-    <div id="error"></div>
-
-    <button onclick="openCamera()"> Open Camera</button>
+    <video id="stream" style="width: 100vw; height: 100vh;"/>
     <script>
-        // получение элнмента видео
-        const videoElem = document.getElementById('video');
-        // получить поле для ввода error
-        const errorElem = document.getElementById('error');
-        // указание параметры канваса
-        const constraints = {
-          audio: false,
+        (async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: "environment"
-          }
-        };
-
-        function openCamera() {
-        // функция для начало записи видео
-            navigator.mediaDevices.getUserMedia(constraints)
-                // mediaStream - разрешение о том что пользователь разрешил открыть камеру
-                .then(mediaStream => {
-
-                    /*Обычно мы передаем полученный MediaStream
-                    в качестве источника видео- или аудиоэлементу
-                    (используя атрибут srcObject видео- или аудиоэлемента*/
-                    videoElem.srcObject = mediaStream;
-
-                }).catch(err => {
-                    // handling the error if any
-                    errorElem.innerHTML = err;
-                    
-                    /*отделяется от соседних элементов переносом 
-                    строки и занимает всю доступную ширину.*/
-                    errorElem.style.display = "block";
-                });
-
-        }
-    </script>
+            facingMode: {
+              ideal: "environment"
+            }
+          },
+          audio: false
+        });
+        const videoEl = document.querySelector("#stream");
+        videoEl.srcObject = stream;
+        await videoEl.play();
+        
+        const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
+        window.setInterval(async () => {
+          const barcodes = await barcodeDetector.detect(videoEl);
+          if (barcodes.length <= 0) return;
+          alert(barcodes.map(barcode => barcode.rawValue));
+        }, 1000)
+        })();
+            </script>
 </body>
 
 </html>
