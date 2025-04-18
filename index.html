@@ -27,20 +27,21 @@
             display: none;
         }
     </style>
-    <title>GetUserMedia demo</title>
+    <title>Просто фото</title>
 </head>
 
 <body>
-    <h1> WebRTC getUserMedia() demo</h1>
 
     <video id='video' width="600" height="300" autoplay playsinline>
         Sorry, video element not supported in your browser
     </video>
 
     <div id="error"></div>
+    <!--<button onclick="openCamera()"> Open Camera</button>-->
 
-    <button onclick="openCamera()"> Open Camera</button>
     <script>
+        window.addEventListener('load', () => {openCamera(); });
+
         // получение элнмента видео
         const videoElem = document.getElementById('video');
         // получить поле для ввода error
